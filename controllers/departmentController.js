@@ -40,9 +40,46 @@ export const getAllDepartments = async (req, res) => {
         };
       }
   
-      const employees = await Department.find(query).sort({ createdAt: -1 });
-      res.status(200).json(employees);
+      const departments = await Department.find(query).sort({ createdAt: -1 });
+      res.status(200).json(departments);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch departments", error: error.message });
     }
   };
+
+  export const updateDepartment = async (req, res) => {
+      try {
+        const { id } = req.params;
+    
+        const updatedDepartment = await Department.findByIdAndUpdate(id, req.body, {
+          new: true, 
+          runValidators: true, 
+        });
+    
+        if (!updatedDepartment) {
+          return res.status(404).json({ message: 'Department not found' });
+        }
+    
+        res.status(200).json({ message: 'department updated successfully', department: updatedDepartment });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to update department', error: error.message });
+      }
+    };
+
+    export const deleteDepartment = async (req, res) => {
+      try {
+        const { id } = req.params;
+    
+        const deletedDepartment = await Department.findByIdAndDelete(id);
+    
+        if (!deletedDepartment) {
+          return res.status(404).json({ message: 'Department not found' });
+        }
+    
+        res.status(200).json({ message: 'Department deleted successfully' });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to delete Department', error: error.message });
+      }
+    };
